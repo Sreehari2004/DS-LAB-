@@ -1,0 +1,77 @@
+# =========================================================
+# FINDING OUTLIERS USING PLOTS
+# Dataset: iris
+# =========================================================
+
+# ---- Load Dataset ----
+data("iris")
+
+# ---- Inspect Structure ----
+cat("===== Structure of iris Dataset =====\n")
+str(iris)
+
+# ---- 1. BOX PLOT METHOD (VISUAL OUTLIER DETECTION) ----
+# Boxplots show quartiles and outliers (points outside whiskers)
+
+# Boxplot for Sepal.Length across Species
+boxplot(Sepal.Length ~ Species, data = iris,
+        main = "Boxplot: Sepal Length by Species",
+        xlab = "Species", ylab = "Sepal Length (cm)",
+        col = c("lightblue", "lightgreen", "lightpink"),
+        border = "darkgray")
+
+# ---- 2. IDENTIFY NUMERIC OUTLIERS PROGRAMMATICALLY ----
+# Using IQR (Interquartile Range) method
+
+find_outliers <- function(x) {
+  Q1 <- quantile(x, 0.25)
+  Q3 <- quantile(x, 0.75)
+  IQR_val <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR_val
+  upper_bound <- Q3 + 1.5 * IQR_val
+  outliers <- x[x < lower_bound | x > upper_bound]
+  return(outliers)
+}
+
+# Example: Outliers in Sepal.Length
+outliers_sepal <- find_outliers(iris$Sepal.Length)
+cat("\nOutliers in Sepal.Length:\n")
+print(outliers_sepal)
+
+# Example: Outliers in Petal.Width
+outliers_petal <- find_outliers(iris$Petal.Width)
+cat("\nOutliers in Petal.Width:\n")
+print(outliers_petal)
+
+# ---- 3. SCATTER PLOT TO VISUALIZE OUTLIERS ----
+# Highlight potential outliers visually
+
+plot(iris$Sepal.Length, iris$Sepal.Width,
+     main = "Scatter Plot: Detecting Outliers (Sepal Dimensions)",
+     xlab = "Sepal Length (cm)",
+     ylab = "Sepal Width (cm)",
+     pch = 19, col = as.numeric(iris$Species))
+
+# ---- 4. Highlight Outliers on Scatter Plot ----
+# Identify and mark Sepal.Length outliers
+outlier_indices <- which(iris$Sepal.Length %in% outliers_sepal)
+points(iris$Sepal.Length[outlier_indices], iris$Sepal.Width[outlier_indices],
+       pch = 21, bg = "red", cex = 1.5)
+text(iris$Sepal.Length[outlier_indices], iris$Sepal.Width[outlier_indices],
+     labels = outlier_indices, pos = 3, cex = 0.8, col = "red")
+
+legend("topright", legend = c("Setosa", "Versicolor", "Virginica", "Outlier"),
+       col = c(1, 2, 3, "red"), pch = c(19, 19, 19, 21), bty = "n")
+
+# ---- 5. Optional: Boxplot for all numeric columns ----
+par(mfrow = c(2, 2))  # multi-plot layout
+for (col in 1:4) {
+  boxplot(iris[, col],
+          main = paste("Boxplot of", names(iris)[col]),
+          col = "lightgray",
+          border = "darkblue")
+}
+par(mfrow = c(1, 1))  # reset layout
+
+# ---- END ----
+cat("\nOutlier detection and visualization complete.\n")
