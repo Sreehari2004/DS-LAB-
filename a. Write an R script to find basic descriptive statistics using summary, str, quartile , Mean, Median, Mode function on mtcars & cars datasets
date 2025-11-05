@@ -1,0 +1,47 @@
+# ===========================
+# Basic Descriptive Statistics in R
+# Datasets: mtcars & cars
+# ===========================
+
+# ---- Load Built-in Datasets ----
+data("mtcars")
+data("cars")
+
+# ---- Define a Mode Function ----
+get_mode <- function(x) {
+  uniqx <- unique(x)
+  uniqx[which.max(tabulate(match(x, uniqx)))]
+}
+
+# ---- Descriptive Statistics for mtcars ----
+cat("===== mtcars Dataset =====\n")
+str(mtcars)                                # Structure of dataset
+summary(mtcars)                            # Summary statistics
+
+cat("\n--- Additional Statistics for mtcars ---\n")
+cat("Mean of mpg:", mean(mtcars$mpg), "\n")
+cat("Median of mpg:", median(mtcars$mpg), "\n")
+cat("Mode of mpg:", get_mode(mtcars$mpg), "\n")
+
+cat("Quartiles of mpg:\n")
+print(quantile(mtcars$mpg, probs = c(0, 0.25, 0.5, 0.75, 1)))
+
+# ---- Descriptive Statistics for cars ----
+cat("\n\n===== cars Dataset =====\n")
+str(cars)                                  # Structure of dataset
+summary(cars)                              # Summary statistics
+
+cat("\n--- Additional Statistics for cars ---\n")
+cat("Mean of speed:", mean(cars$speed), "\n")
+cat("Median of speed:", median(cars$speed), "\n")
+cat("Mode of speed:", get_mode(cars$speed), "\n")
+
+cat("Quartiles of speed:\n")
+print(quantile(cars$speed, probs = c(0, 0.25, 0.5, 0.75, 1)))
+
+# ---- Optional: Compute statistics for all numeric columns ----
+cat("\n\n===== Column-wise Means (mtcars) =====\n")
+print(sapply(mtcars, mean))
+
+cat("\n===== Column-wise Medians (mtcars) =====\n")
+print(sapply(mtcars, median))
