@@ -1,0 +1,17 @@
+# Create R objects
+num1 <- 10
+num2 <- 5
+result <- 0
+
+# Perform calculations using R objects
+num1 + num2
+num1 - num2
+num1 * num2
+num1 / num2
+
+# Store the result in another R object
+result <- num1 + num2
+print(result)
+
+# You can also combine direct numbers with R objects
+num1 * 2 + 7
