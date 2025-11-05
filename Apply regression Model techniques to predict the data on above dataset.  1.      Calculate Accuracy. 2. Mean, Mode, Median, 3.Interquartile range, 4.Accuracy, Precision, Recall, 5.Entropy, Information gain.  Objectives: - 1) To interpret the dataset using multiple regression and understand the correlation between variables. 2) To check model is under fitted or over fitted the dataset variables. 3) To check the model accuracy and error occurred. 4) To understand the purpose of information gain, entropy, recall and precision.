@@ -1,0 +1,119 @@
+# =========================================================
+# DS LAB – REGRESSION MODEL ANALYSIS
+# Objective:
+# 1. Apply regression techniques to predict data
+# 2. Calculate accuracy, mean, mode, median, IQR
+# 3. Evaluate accuracy, precision, recall
+# 4. Compute entropy and information gain
+# 5. Check model fit (underfitting / overfitting)
+# =========================================================
+
+# ---- 1. Dataset Creation ----
+set.seed(123)
+customer_churn <- data.frame(
+  MonthlyCharges = runif(100, 20, 120),
+  Tenure = runif(100, 1, 60),
+  TotalCharges = runif(100, 500, 5000)
+)
+
+# Target Variable: ChurnScore
+customer_churn$ChurnScore <- 10 + 
+  0.6 * customer_churn$MonthlyCharges + 
+  0.3 * customer_churn$Tenure + 
+  rnorm(100, 0, 8)
+
+# ---- 2. Multiple Linear Regression ----
+reg_model <- lm(ChurnScore ~ MonthlyCharges + Tenure + TotalCharges, data = customer_churn)
+summary(reg_model)
+
+# ---- 3. Descriptive Statistics ----
+# Mean, Median, Mode, IQR
+mean_values <- sapply(customer_churn[,1:3], mean)
+median_values <- sapply(customer_churn[,1:3], median)
+iqr_values <- sapply(customer_churn[,1:3], IQR)
+
+# Mode function
+get_mode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+mode_values <- sapply(customer_churn[,1:3], get_mode)
+
+cat("\n===== DESCRIPTIVE STATISTICS =====\n")
+print(data.frame(Mean = mean_values, Median = median_values, Mode = mode_values, IQR = iqr_values))
+
+# ---- 4. Prediction ----
+predicted <- predict(reg_model, customer_churn)
+
+# ---- 5. Model Evaluation (Accuracy, Precision, Recall) ----
+# Convert to binary outcome for evaluation
+threshold <- median(customer_churn$ChurnScore)
+actual_class <- ifelse(customer_churn$ChurnScore > threshold, 1, 0)
+predicted_class <- ifelse(predicted > threshold, 1, 0)
+
+# Confusion Matrix
+confusion <- table(Predicted = predicted_class, Actual = actual_class)
+print(confusion)
+
+accuracy <- sum(diag(confusion)) / sum(confusion)
+precision <- confusion[2,2] / sum(confusion[2,])
+recall <- confusion[2,2] / sum(confusion[,2])
+
+cat("\n===== MODEL EVALUATION METRICS =====\n")
+cat("Accuracy :", round(accuracy,4), "\n")
+cat("Precision:", round(precision,4), "\n")
+cat("Recall   :", round(recall,4), "\n")
+
+# ---- 6. Model Fit Check ----
+r2 <- summary(reg_model)$r.squared
+adj_r2 <- summary(reg_model)$adj.r.squared
+cat("\n===== MODEL FIT =====\n")
+cat("R-squared:", round(r2,4), "\nAdjusted R-squared:", round(adj_r2,4), "\n")
+
+if (abs(r2 - adj_r2) > 0.05) {
+  cat("→ Model may be Overfitted.\n")
+} else {
+  cat("→ Model appears Well-Fitted.\n")
+}
+
+# ---- 7. Residual Plot ----
+plot(reg_model, which = 1, main = "Residuals vs Fitted (Model Fit Check)")
+
+# ---- 8. Entropy and Information Gain ----
+# Entropy function
+entropy <- function(p1, p2) {
+  if (p1 == 0 || p2 == 0) return(0)
+  - (p1 * log2(p1) + p2 * log2(p2))
+}
+
+# Entropy before split
+p_high <- mean(actual_class == 1)
+p_low  <- mean(actual_class == 0)
+total_entropy <- entropy(p_high, p_low)
+
+# Split by MonthlyCharges (median)
+split <- ifelse(customer_churn$MonthlyCharges > median(customer_churn$MonthlyCharges), "High", "Low")
+
+split_entropy <- 0
+for (s in unique(split)) {
+  subset_class <- actual_class[split == s]
+  p1 <- mean(subset_class == 1)
+  p2 <- mean(subset_class == 0)
+  split_entropy <- split_entropy + (length(subset_class)/length(actual_class)) * entropy(p1, p2)
+}
+
+# Information Gain
+info_gain <- total_entropy - split_entropy
+
+cat("\n===== ENTROPY & INFORMATION GAIN =====\n")
+cat("Entropy (before split):", round(total_entropy,4), "\n")
+cat("Entropy (after split) :", round(split_entropy,4), "\n")
+cat("Information Gain       :", round(info_gain,4), "\n")
+
+# ---- 9. Final Summary ----
+cat("\n===== SUMMARY =====\n")
+cat("→ Descriptive statistics calculated (Mean, Median, Mode, IQR)\n")
+cat("→ Regression model fitted with R² =", round(r2,4), "\n")
+cat("→ Accuracy =", round(accuracy,4), ", Precision =", round(precision,4), ", Recall =", round(recall,4), "\n")
+cat("→ Entropy and Information Gain computed successfully\n")
+cat("→ Model fit check completed\n")
