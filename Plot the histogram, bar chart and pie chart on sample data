@@ -1,0 +1,39 @@
+# =========================================================
+# VISUALIZING SAMPLE DATA IN R
+# Plots: Histogram | Bar Chart | Pie Chart
+# =========================================================
+
+# ---- 1. CREATE SAMPLE DATA ----
+# Numeric data for histogram
+sample_numbers <- c(45, 50, 51, 48, 60, 55, 65, 70, 45, 52, 49, 68, 72, 58, 66)
+
+# Categorical data for bar and pie chart
+fruits <- c("Apple", "Banana", "Mango", "Apple", "Banana", "Apple", 
+             "Grapes", "Mango", "Mango", "Apple")
+fruit_counts <- table(fruits)
+
+# ---- 2. HISTOGRAM (for numeric data) ----
+hist(sample_numbers,
+     main = "Histogram of Sample Numbers",
+     xlab = "Values",
+     ylab = "Frequency",
+     col = "skyblue",
+     border = "white")
+
+# ---- 3. BAR CHART (for categorical data) ----
+barplot(fruit_counts,
+        main = "Bar Chart of Fruit Counts",
+        xlab = "Fruit Type",
+        ylab = "Count",
+        col = c("lightgreen", "orange", "gold", "violet"),
+        border = "darkgray")
+
+# ---- 4. PIE CHART (for categorical data) ----
+pie(fruit_counts,
+    main = "Pie Chart of Fruit Distribution",
+    col = c("lightgreen", "orange", "gold", "violet"),
+    labels = paste(names(fruit_counts), "\n", fruit_counts),
+    clockwise = TRUE)
+
+# ---- END ----
+cat("\nHistogram, Bar Chart, and Pie Chart plotted successfully.\n")
