@@ -1,0 +1,52 @@
+# ======================================
+# Subset and Aggregate on iris Dataset
+# ======================================
+
+# ---- Load Built-in Dataset ----
+data("iris")
+
+# ---- Display Structure of Dataset ----
+cat("===== Structure of iris Dataset =====\n")
+str(iris)
+
+# ---- 1. Using subset() Function ----
+cat("\n===== Subset Examples =====\n")
+
+# Example 1: Subset where Species is "setosa"
+iris_setosa <- subset(iris, Species == "setosa")
+cat("\nSubset: Species == 'setosa'\n")
+print(head(iris_setosa))
+
+# Example 2: Subset with Sepal.Length > 5 and Species == "versicolor"
+iris_large_versicolor <- subset(iris, Sepal.Length > 5 & Species == "versicolor")
+cat("\nSubset: Sepal.Length > 5 & Species == 'versicolor'\n")
+print(head(iris_large_versicolor))
+
+# Example 3: Select only specific columns (Sepal.Length, Petal.Length)
+iris_subset_cols <- subset(iris, select = c(Sepal.Length, Petal.Length, Species))
+cat("\nSubset: Selected Columns (Sepal.Length, Petal.Length, Species)\n")
+print(head(iris_subset_cols))
+
+# ---- 2. Using aggregate() Function ----
+cat("\n===== Aggregate Examples =====\n")
+
+# Example 1: Mean of Sepal.Length by Species
+mean_sepal <- aggregate(Sepal.Length ~ Species, data = iris, FUN = mean)
+cat("\nMean of Sepal.Length by Species:\n")
+print(mean_sepal)
+
+# Example 2: Mean of multiple columns grouped by Species
+mean_all <- aggregate(. ~ Species, data = iris, FUN = mean)
+cat("\nMean of all numeric columns by Species:\n")
+print(mean_all)
+
+# Example 3: Median Petal.Width grouped by Species
+median_petal <- aggregate(Petal.Width ~ Species, data = iris, FUN = median)
+cat("\nMedian Petal.Width by Species:\n")
+print(median_petal)
+
+# Example 4: Custom function — range of Sepal.Length by Species
+range_sepal <- aggregate(Sepal.Length ~ Species, data = iris, 
+                         FUN = function(x) max(x) - min(x))
+cat("\nRange of Sepal.Length by Species:\n")
+print(range_sepal)
