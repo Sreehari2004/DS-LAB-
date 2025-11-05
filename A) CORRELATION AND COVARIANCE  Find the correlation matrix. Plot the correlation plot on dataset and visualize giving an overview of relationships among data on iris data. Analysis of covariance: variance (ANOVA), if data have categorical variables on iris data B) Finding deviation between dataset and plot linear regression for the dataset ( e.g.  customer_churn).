@@ -1,0 +1,108 @@
+# =========================================================
+# PART A: CORRELATION, COVARIANCE, AND ANOVA (iris dataset)
+# =========================================================
+
+# ---- Load Dataset ----
+data("iris")
+
+# ---- 1. Correlation Matrix ----
+cat("===== Correlation Matrix (iris numeric columns) =====\n")
+numeric_data <- iris[, 1:4]  # only numeric columns
+cor_matrix <- cor(numeric_data)
+print(cor_matrix)
+
+# ---- 2. Covariance Matrix ----
+cat("\n===== Covariance Matrix =====\n")
+cov_matrix <- cov(numeric_data)
+print(cov_matrix)
+
+# ---- 3. Correlation Plot ----
+if(!require(corrplot)) install.packages("corrplot", dependencies = TRUE)
+library(corrplot)
+
+corrplot(cor_matrix,
+         method = "color",
+         type = "upper",
+         tl.col = "black",
+         tl.cex = 0.9,
+         addCoef.col = "black",
+         number.cex = 0.7,
+         title = "Correlation Plot - iris Dataset",
+         mar = c(0, 0, 2, 0))
+
+# ---- INTERPRETATION ----
+# High correlation between Petal.Length and Petal.Width (~0.96)
+# Sepal.Length moderately correlates with Petal.Length (~0.87)
+# Sepal.Width shows weak correlation with other variables
+
+# ---- 4. Analysis of Covariance (ANOVA) ----
+# Testing whether Sepal.Length significantly differs by Species
+
+cat("\n===== ANOVA: Sepal.Length by Species =====\n")
+anova_model <- aov(Sepal.Length ~ Species, data = iris)
+summary(anova_model)
+
+# ---- Visualize ANOVA Results ----
+boxplot(Sepal.Length ~ Species, data = iris,
+        main = "ANOVA: Sepal Length by Species",
+        xlab = "Species", ylab = "Sepal Length (cm)",
+        col = c("lightblue", "lightgreen", "lightpink"),
+        border = "darkgray")
+
+# ---- INTERPRETATION ----
+# If p-value < 0.05, differences between groups (species) are significant.
+
+
+# =========================================================
+# PART B: DEVIATION & LINEAR REGRESSION (Customer_Churn Example)
+# =========================================================
+
+# ---- 1. Load or Simulate Customer Churn-like Dataset ----
+# Create sample data resembling churn scenario
+set.seed(123)
+customer_data <- data.frame(
+  MonthlyCharges = runif(100, 20, 120),
+  Tenure = runif(100, 1, 60),
+  TotalCharges = runif(100, 100, 5000)
+)
+
+# Add a dependent variable with linear relation + noise
+customer_data$ChurnScore <- 10 + 0.5 * customer_data$MonthlyCharges +
+                            0.2 * customer_data$Tenure +
+                            rnorm(100, mean = 0, sd = 10)
+
+# ---- 2. Measure Deviation ----
+cat("\n===== Summary Statistics =====\n")
+print(summary(customer_data))
+
+# Standard deviation of variables
+cat("\n===== Standard Deviations =====\n")
+print(sapply(customer_data[, 1:3], sd))
+
+# ---- 3. Linear Regression Model ----
+lin_model <- lm(ChurnScore ~ MonthlyCharges + Tenure + TotalCharges,
+                data = customer_data)
+cat("\n===== Linear Regression Summary =====\n")
+summary(lin_model)
+
+# ---- 4. Plot Linear Regression (MonthlyCharges vs ChurnScore) ----
+plot(customer_data$MonthlyCharges, customer_data$ChurnScore,
+     main = "Linear Regression: MonthlyCharges vs ChurnScore",
+     xlab = "Monthly Charges",
+     ylab = "Churn Score",
+     pch = 19, col = "steelblue")
+
+# Add regression line
+abline(lm(ChurnScore ~ MonthlyCharges, data = customer_data),
+       col = "red", lwd = 2)
+
+# ---- 5. Residual Plot ----
+plot(lin_model$residuals,
+     main = "Residuals (Deviation) Plot",
+     ylab = "Residuals",
+     xlab = "Observation Index",
+     col = "darkgreen", pch = 19)
+abline(h = 0, col = "red", lwd = 2, lty = 2)
+
+# ---- END ----
+cat("\nCorrelation, ANOVA, and Linear Regression Analysis Completed Successfully.\n")
