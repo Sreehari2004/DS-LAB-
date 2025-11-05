@@ -1,0 +1,27 @@
+# Load required libraries
+library(caTools)
+# Load dataset
+col_names <- c("Pregnancies", "Glucose", "BloodPressure", "SkinThickness",
+"Insulin", "BMI", "DiabetesPedigree", "Age", "Outcome")
+data <- read.csv("C:\\Users\\sarth\\Downloads\\Data Science Course 2\\pima-indians-diabetes.data.txt", header =
+FALSE, col.names = col_names)
+# Identify continuous variables with invalid zeros
+zero_vars <- c("Glucose", "BloodPressure", "SkinThickness", "Insulin", "BMI")
+# Replace 0 with NA for biologically implausible zeros
+for (var in zero_vars) {
+data[[var]][data[[var]] == 0] <- NA
+}
+# Impute missing values using MEDIAN
+for (var in zero_vars) {
+data[[var]][is.na(data[[var]])] <- median(data[[var]], na.rm = TRUE)
+}
+#correlation matrix among continuous predictors + Glucose
+continuous_vars <- c("Glucose", "BloodPressure", "SkinThickness", "Insulin", "BMI", "Age")
+cor_matrix <- cor(data[continuous_vars], use = "complete.obs")
+print("Correlation Matrix:")
+print(round(cor_matrix, 2))
+# Build multiple regression model: Predict Glucose from other features
+model1 <- lm(Glucose ~ Pregnancies + BloodPressure + SkinThickness +
+Insulin + BMI + DiabetesPedigree + Age, data = data)
+# Display model summary for interpretation
+summary(model1)
