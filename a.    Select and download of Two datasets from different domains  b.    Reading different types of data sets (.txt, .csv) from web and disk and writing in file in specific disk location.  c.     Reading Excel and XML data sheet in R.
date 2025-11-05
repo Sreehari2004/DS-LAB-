@@ -1,0 +1,87 @@
+# =========================================================
+# TASK: Data Import & Export in R
+# ---------------------------------------------------------
+# a. Select and Download Two Datasets
+# b. Read & Write (.txt, .csv) files from Web/Disk
+# c. Read Excel and XML Files
+# =========================================================
+
+# ---- a. SELECT AND DOWNLOAD TWO DATASETS ----
+# Dataset 1: Finance domain - Stock market data
+url_finance <- "https://raw.githubusercontent.com/datasets/finance-vix/master/data/vix-daily.csv"
+
+# Dataset 2: Health domain - COVID-19 data
+url_health <- "https://raw.githubusercontent.com/datasets/covid-19/main/data/countries-aggregated.csv"
+
+# Download datasets to disk
+download.file(url_finance, destfile = "D:/Data/vix_data.csv", mode = "wb")
+download.file(url_health, destfile = "D:/Data/covid_data.csv", mode = "wb")
+
+cat("Datasets downloaded successfully to D:/Data/\n")
+
+# ---- b. READING AND WRITING DIFFERENT FILE TYPES ----
+
+# ---- 1. Reading a CSV file from Web ----
+finance_data <- read.csv(url_finance)
+cat("\nFirst few rows of Finance Data (from web):\n")
+print(head(finance_data))
+
+# ---- 2. Reading a CSV file from Disk ----
+covid_data <- read.csv("D:/Data/covid_data.csv")
+cat("\nFirst few rows of COVID Data (from disk):\n")
+print(head(covid_data))
+
+# ---- 3. Writing data to CSV in a specific disk location ----
+write.csv(finance_data, file = "D:/Data/finance_output.csv", row.names = FALSE)
+cat("\nFinance data successfully written to D:/Data/finance_output.csv\n")
+
+# ---- 4. Reading a TXT file (Example) ----
+# Creating a sample .txt file and reading it back
+write.table(head(covid_data), file = "D:/Data/sample_data.txt", sep = "\t", row.names = FALSE)
+txt_data <- read.table("D:/Data/sample_data.txt", header = TRUE, sep = "\t")
+
+cat("\nTXT Data preview:\n")
+print(head(txt_data))
+
+# ---- c. READING EXCEL AND XML FILES ----
+
+# ---- Excel File ----
+# Install required library if not available
+if(!require(readxl)) install.packages("readxl", dependencies = TRUE)
+library(readxl)
+
+# Example Excel file from web (or local)
+excel_url <- "https://file-examples.com/storage/feadff39a94a75ee8d93036/2017/02/file_example_XLSX_10.xlsx"
+download.file(excel_url, destfile = "D:/Data/sample_excel.xlsx", mode = "wb")
+
+excel_data <- read_excel("D:/Data/sample_excel.xlsx")
+cat("\nExcel Data Preview:\n")
+print(head(excel_data))
+
+# ---- XML File ----
+# Install XML library if not available
+if(!require(XML)) install.packages("XML", dependencies = TRUE)
+library(XML)
+
+# Example XML dataset (from UCI Machine Learning Repository)
+xml_url <- "https://www.w3schools.com/xml/simple.xml"
+xml_data <- xmlParse(xml_url)
+xml_root <- xmlRoot(xml_data)
+
+cat("\nXML Root Node:\n")
+print(xmlName(xml_root))
+cat("\nXML Structure:\n")
+print(xmlRoot(xml_data)[[1]])
+
+# Convert XML to data frame for structured use
+xml_df <- xmlToDataFrame(nodes = getNodeSet(xml_data, "//food"))
+cat("\nConverted XML to Data Frame:\n")
+print(head(xml_df))
+
+# ---- Export XML Data Frame to Disk ----
+write.csv(xml_df, "D:/Data/xml_converted_output.csv", row.names = FALSE)
+cat("\nXML converted data successfully saved to D:/Data/xml_converted_output.csv\n")
+
+# =========================================================
+# END OF SCRIPT
+# =========================================================
