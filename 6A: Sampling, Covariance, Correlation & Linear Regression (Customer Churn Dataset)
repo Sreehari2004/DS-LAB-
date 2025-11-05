@@ -1,0 +1,57 @@
+# =========================================================
+# DS LAB-6A
+# Sampling | Covariance | Correlation | Deviation | Linear Regression
+# Dataset: customer_churn (simulated)
+# =========================================================
+
+# ---- 1. Simulate Dataset (if not available) ----
+set.seed(123)
+customer_churn <- data.frame(
+  MonthlyCharges = runif(100, 20, 120),
+  Tenure = runif(100, 1, 60),
+  TotalCharges = runif(100, 500, 5000)
+)
+
+# Target variable (e.g., ChurnScore based on charges and tenure)
+customer_churn$ChurnScore <- 10 + 
+  0.5 * customer_churn$MonthlyCharges +
+  0.2 * customer_churn$Tenure +
+  rnorm(100, 0, 10)
+
+# ---- 2. Sampling (Train-Test Split) ----
+if(!require(caTools)) install.packages("caTools", dependencies = TRUE)
+library(caTools)
+
+set.seed(123)
+split <- sample.split(customer_churn$ChurnScore, SplitRatio = 0.7)
+train <- subset(customer_churn, split == TRUE)
+test <- subset(customer_churn, split == FALSE)
+
+# ---- 3. Covariance & Correlation ----
+cat("===== Covariance Matrix =====\n")
+print(cov(train[, 1:3]))
+
+cat("\n===== Correlation Matrix =====\n")
+print(cor(train[, 1:3]))
+
+# ---- 4. Deviation (Standard Deviation) ----
+cat("\n===== Standard Deviation =====\n")
+print(sapply(train[, 1:3], sd))
+
+# ---- 5. Linear Regression Model ----
+lin_model <- lm(ChurnScore ~ MonthlyCharges + Tenure + TotalCharges, data = train)
+summary(lin_model)
+
+# ---- 6. Prediction and Visualization ----
+pred <- predict(lin_model, newdata = test)
+
+# Plot actual vs predicted
+plot(test$ChurnScore, pred,
+     main = "Linear Regression: Actual vs Predicted (Customer Churn)",
+     xlab = "Actual Churn Score",
+     ylab = "Predicted Churn Score",
+     pch = 19, col = "steelblue")
+abline(0, 1, col = "red", lwd = 2)
+
+# ---- END LAB 6A ----
+cat("\nLinear Regression Model Built Successfully (LAB-6A)\n")
