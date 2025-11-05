@@ -1,0 +1,7 @@
+2 + 3
+10 - 5
+4 * 6
+20 / 4
+(5 + 3) * 2 # Parentheses for order of operations
+sqrt(81) # Square root
+abs(-15) # Absolute value
