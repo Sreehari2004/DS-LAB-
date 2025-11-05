@@ -1,0 +1,52 @@
+# =========================================================
+# DS LAB-6C
+# Logistic Regression | Binary Outcome (Admission)
+# Dataset: Graduate Admission (from Web)
+# Libraries: foreign, MASS
+# =========================================================
+
+# ---- 1. Import Dataset ----
+if(!require(foreign)) install.packages("foreign", dependencies = TRUE)
+if(!require(MASS)) install.packages("MASS", dependencies = TRUE)
+library(foreign)
+library(MASS)
+
+# Example dataset (Graduate Admission)
+admission_url <- "https://stats.idre.ucla.edu/stat/data/binary.csv"
+admission_data <- read.csv(admission_url)
+colnames(admission_data) <- c("Admit", "GRE", "GPA", "Rank")
+
+# ---- 2. Convert Rank to Factor (Categorical Variable) ----
+admission_data$Rank <- as.factor(admission_data$Rank)
+
+# ---- 3. Logistic Regression ----
+admit_model <- glm(Admit ~ GRE + GPA + Rank, 
+                   data = admission_data, 
+                   family = binomial)
+
+summary(admit_model)
+
+# ---- 4. Predictions ----
+prob_admit <- predict(admit_model, type = "response")
+predicted_admit <- ifelse(prob_admit > 0.5, 1, 0)
+
+# ---- 5. Model Accuracy ----
+accuracy <- mean(predicted_admit == admission_data$Admit)
+cat("\nModel Accuracy:", round(accuracy * 100, 2), "%\n")
+
+# ---- 6. Model Fit Check ----
+cat("\nModel Fit: Null Deviance vs Residual Deviance\n")
+cat("Null Deviance:", admit_model$null.deviance, "\n")
+cat("Residual Deviance:", admit_model$deviance, "\n")
+cat("Improvement:", admit_model$null.deviance - admit_model$deviance, "\n")
+
+# ---- 7. Visualization ----
+plot(admission_data$GRE, prob_admit,
+     main = "Logistic Regression: Admission Probability vs GRE Score",
+     xlab = "GRE Score",
+     ylab = "Probability of Admission",
+     pch = 19, col = "darkgreen")
+lines(lowess(admission_data$GRE, prob_admit), col = "red", lwd = 2)
+
+# ---- END LAB 6C ----
+cat("\nLogistic Regression for Admission Analysis Completed (LAB-6C)\n")
