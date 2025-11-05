@@ -1,0 +1,50 @@
+# =========================================================
+# DS LAB-6B
+# Logistic Regression | Accuracy | MAE | MSE
+# Dataset: Iris (from Web)
+# =========================================================
+
+# ---- 1. Import Dataset ----
+iris_url <- "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
+iris_data <- read.csv(iris_url, header = FALSE)
+colnames(iris_data) <- c("Sepal.Length", "Sepal.Width", 
+                         "Petal.Length", "Petal.Width", "Species")
+
+# Convert to binary classification: Setosa vs Non-Setosa
+iris_data$BinarySpecies <- ifelse(iris_data$Species == "Iris-setosa", 1, 0)
+
+# ---- 2. Logistic Regression ----
+log_model <- glm(BinarySpecies ~ Petal.Length, data = iris_data, family = binomial)
+summary(log_model)
+
+# ---- 3. Predictions ----
+prob <- predict(log_model, type = "response")
+predicted_class <- ifelse(prob > 0.5, 1, 0)
+
+# ---- 4. Model Accuracy ----
+accuracy <- mean(predicted_class == iris_data$BinarySpecies)
+cat("\nModel Accuracy:", round(accuracy * 100, 2), "%\n")
+
+# ---- 5. MAE and MSE ----
+MAE <- mean(abs(iris_data$BinarySpecies - prob))
+MSE <- mean((iris_data$BinarySpecies - prob)^2)
+
+cat("\nMean Absolute Error (MAE):", round(MAE, 4))
+cat("\nMean Squared Error (MSE):", round(MSE, 4))
+
+# ---- 6. Model Fit ----
+cat("\nModel Fit (Null deviance vs Residual deviance):\n")
+print(log_model$null.deviance - log_model$deviance)
+
+# ---- 7. Visualization ----
+plot(iris_data$Petal.Length, iris_data$BinarySpecies,
+     main = "Logistic Regression on Petal Length (Iris)",
+     xlab = "Petal Length",
+     ylab = "Probability (Setosa)",
+     col = "steelblue", pch = 19)
+lines(sort(iris_data$Petal.Length),
+      sort(prob),
+      col = "red", lwd = 2)
+
+# ---- END LAB 6B ----
+cat("\nLogistic Regression Model Completed (LAB-6B)\n")
