@@ -1,0 +1,31 @@
+# Basic arithmetic (already covered but good to reiterate)
+5 + 3
+12 - 4
+6 * 7
+100 / 5
+
+# Powers and Exponents
+2^3 # 2 to the power of 3
+exp(1) # e (Euler's number) to the power of 1
+log(10) # Natural logarithm (base e)
+log10(100) # Logarithm base 10
+log(8, base = 2) # Logarithm base 2
+
+# Square Root
+sqrt(144)
+
+# Absolute Value
+abs(-25)
+
+# Rounding
+round(3.14159, digits = 2) # Round to 2 decimal places
+floor(7.8) # Rounds down to the nearest integer
+ceiling(7.1) # Rounds up to the nearest integer
+
+# Trigonometric Functions (angles in radians)
+sin(pi/2) # Sine of 90 degrees (pi/2 radians)
+cos(0) # Cosine of 0 degrees
+tan(pi/4) # Tangent of 45 degrees (pi/4 radians)
+
+# Constants
+pi # Value of pi
